@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Login - Structure App</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #2c3e50; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; background-color: #2980b9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        button:hover { background-color: #1f618d; }
+        .error { color: #e74c3c; margin-top: 15px; display: none; font-weight: bold; }
+        .footer-link { margin-top: 20px; font-size: 14px; color: #7f8c8d; }
+        .footer-link a { color: #2980b9; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2> Staff Login</h2>
+        <p style="color: #7f8c8d; margin-bottom: 20px;">Please enter your credentials to access the data.</p>
+        
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="password" id="password" placeholder="Password" required>
+        
+        <button onclick="handleLogin()">Login</button>
+        
+        <p id="errorMessage" class="error">Invalid email or password. Please try again.</p>
+        
+        <div class="footer-link">
+            Need to submit a form? <a href="index.html">Go to Form</a>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://blfarjbqnnhfuslzjpfj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_MPXEEcAtD0KTHdi6h5ZDww_uBj4LAzt';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
+            const btn = document.querySelector('button');
+
+            // Hide previous errors
+            errorMsg.style.display = 'none';
+            btn.textContent = 'Checking...';
+            btn.disabled = true;
+
+            try {
+                // Check if email and password match in the staff_users table
+                const { data, error } = await supabaseClient
+                    .from('staff_users')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('password', password)
+                    .single();
+
+                if (error || !data) {
+                    // Login failed
+                    errorMsg.style.display = 'block';
+                } else {
+                    // Login successful! Save to browser memory
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userRole', data.role);
+                    window.location.href = 'summary.html'; // Redirect to data
+                }
+            } catch (err) {
+                errorMsg.style.display = 'block';
+                console.error(err);
+            }
+
+            btn.textContent = 'Login';
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
