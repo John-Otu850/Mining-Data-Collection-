@@ -14,6 +14,7 @@
         .form-section { margin-bottom: 25px; padding: 20px; background-color: #fafafa; border: 1px solid #eaeaea; border-radius: 6px; }
         .form-section h2 { font-size: 18px; color: #2980b9; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 8px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+        .form-row .form-group:only-child { grid-column: span 2; }
         .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
         label { font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #444; }
         input[type="text"], input[type="number"], input[type="time"], select, input[type="file"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
@@ -82,7 +83,10 @@
 </head>
 <body>
     <div class="header-nav">
-    <h3 style="color: #2c3e50; margin: 0;">Structure App</h3>
+    <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="/image/logo.jpeg" alt="Logo" style="height: 40px; width: auto;">
+    <h3 style="color: #2c3e50; margin: 0;"></h3>
+    </div>
     <div class="nav-buttons">
         <a href="summary.html" class="btn-nav btn-view">View Data</a>
         <a href="index.html" class="btn-nav btn-submit-nav">Submit Form</a>
@@ -102,47 +106,108 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group"><label>Owner *</label><input type="text" name="Owner" placeholder="e.g., Florence Eshun" required></div>
-                    <div class="form-group"><label>House Number *</label><input type="text" name="House_No" placeholder="e.g., 22/25" required></div>
+                   <div class="form-group">
+    <label>House Number *</label>
+    <input type="text" name="House_No" placeholder="e.g., 22/25" required>
+    <input type="file" id="housePhotoInput" accept="image/*" capture="environment" style="display: none;" onchange="previewImage(this, 'housePhotoPreview')">
+    <button type="button" class="btn-gps" style="margin-top: 8px;" onclick="document.getElementById('housePhotoInput').click()">📷 Take House Photo</button>
+    <div id="housePhotoPreview" class="photo-preview"></div>
+</div>
                 </div>
                 <div class="form-group"><label>Digital Address</label><input type="text" name="Digital_Address" placeholder="e.g., GA-123-4567"></div>
             </div>
-
-            <div class="form-section">
-                <h2>🏠 Structure Details</h2>
-                <div class="form-row">
-                    <div class="form-group"><label>Age *</label><select name="Age" required><option value="">Select Age</option><option>Very old</option><option>Old</option><option>Fairly new</option><option>New</option></select></div>
-                    <div class="form-group"><label>Type *</label><select name="Type" required><option value="">Select Type</option><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Mixed Use</option></select></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Length (m) *</label><input type="number" name="Length_m" step="0.1" placeholder="e.g., 20.5" required></div>
-                    <div class="form-group"><label>Breadth (m) *</label><input type="number" name="Breadth_m" step="0.1" placeholder="e.g., 12.0" required></div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h2>🧱 Materials</h2>
-                <div class="form-row">
-                    <div class="form-group"><label>Wall Type *</label><select name="Wall_Type" required><option value="">Select Wall Type</option><option>Clay</option><option>Sandcrete</option><option>Concrete</option><option>Wood</option></select></div>
-                    <div class="form-group"><label>Plaster Type *</label><select name="Plaster_Type" required><option value="">Select Plaster Type</option><option>Cement</option><option>Mud</option><option>None</option></select></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Roof *</label><select name="Roof" required><option value="">Select Roof Type</option><option>Iron Sheet</option><option>Tiles</option><option>Thatch</option><option>Asbestos</option></select></div>
-                    <div class="form-group"><label>Floor *</label><select name="Floor" required><option value="">Select Floor Type</option><option>Cement</option><option>Tiles</option><option>Earth</option><option>Wood</option></select></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Door *</label><select name="Door" required><option value="">Select Door Material</option><option>Wooden</option><option>Metal</option><option>Glass</option></select></div>
-                    <div class="form-group"><label>Window *</label><select name="Window" required><option value="">Select Window Material</option><option>Wooden</option><option>Metal</option><option>Glass</option></select></div>
-                </div>
-            </div>
-
+            <h2>🧱 Materials</h2>
+            <div class="form-row">
+                <div class="form-group">
+                <label>Age *</label>
+                <input type="text" name="Age" list="age-options" placeholder="Select or type..." required>
+        <datalist id="age-options">
+            <option value="Very old">
+            <option value="Old">
+            <option value="Fairly new">
+            <option value="New">
+        </datalist>
+        </div>
+    <div class="form-group">
+        <label>Type *</label>
+        <input type="text" name="Type" list="type-options" placeholder="Select or type..." required>
+        <datalist id="type-options">
+            <option value="Residential">
+            <option value="Commercial">
+            <option value="Industrial">
+            <option value="Mixed Use">
+        </datalist>
+    </div>
+</div>
+    <div class="form-row">
+    <div class="form-group">
+        <label>Plaster Type *</label>
+        <input type="text" name="Plaster_Type" list="plaster-options" placeholder="Select or type..." required>
+        <datalist id="plaster-options">
+            <option value="Cement">
+            <option value="Mud">
+            <option value="None">
+        </datalist>
+    </div>
+    <div class="form-group">
+        <label>Roof *</label>
+        <input type="text" name="Roof" list="roof-options" placeholder="Select or type..." required>
+        <datalist id="roof-options">
+            <option value="Iron Sheet">
+            <option value="Tiles">
+            <option value="Thatch">
+            <option value="Asbestos">
+        </datalist>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group">
+        <label>Floor *</label>
+        <input type="text" name="Floor" list="floor-options" placeholder="Select or type..." required>
+        <datalist id="floor-options">
+            <option value="Cement">
+            <option value="Tiles">
+            <option value="Earth">
+            <option value="Wood">
+        </datalist>
+    </div>
+    <div class="form-group">
+        <label>Door *</label>
+        <input type="text" name="Door" list="door-options" placeholder="Select or type..." required>
+        <datalist id="door-options">
+            <option value="Wooden">
+            <option value="Metal">
+            <option value="Glass">
+        </datalist>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group">
+        <label>Window *</label>
+        <input type="text" name="Window" list="window-options" placeholder="Select or type..." required>
+        <datalist id="window-options">
+            <option value="Wooden">
+            <option value="Metal">
+            <option value="Glass">
+        </datalist>
+    </div>
+  
+</div>
             <div class="form-section">
                 <h2>🏗️ Foundation</h2>
                 <div class="form-row">
-                    <div class="form-group"><label>Foundation Type *</label><select name="Foundation_Type" required><option value="">Select Foundation Type</option><option>Concrete</option><option>Stone</option><option>Wood</option><option>Earth</option></select></div>
-                    <div class="form-group"><label>Foundation Strength *</label><input type="number" name="Foundation_Strength" placeholder="e.g., 21" required></div>
-                </div>
-                <div class="form-group"><label>Wall Strength *</label><input type="number" name="Wall_Strength" placeholder="e.g., 28" required></div>
-            </div>
+    <div class="form-group">
+        <label>Foundation Type *</label>
+        <input type="text" name="Foundation_Type" list="foundation-options" placeholder="Select or type..." required>
+        <datalist id="foundation-options">
+            <option value="Concrete">
+            <option value="Stone">
+            <option value="Wood">
+            <option value="Earth">
+        </datalist>
+    </div>
+    <div class="form-group"><label>Foundation Strength *</label><input type="number" name="Foundation_Strength" placeholder="e.g., 21" required></div>
+</div>
 
             <div class="form-section">
                 <h2>📍 Location</h2>
@@ -152,7 +217,11 @@
                         <input type="text" id="latitude" name="Latitude" placeholder="Click button below to auto-fill" required>
                         <button type="button" class="btn-gps" onclick="captureGPS()">📡 Capture GPS</button>
                     </div>
-                    <div class="form-group"><label>Longitude *</label><input type="text" id="longitude" name="Longitude" placeholder="Click button above to auto-fill" required></div>
+                    <div class="form-group">
+                    <label>Longitude *</label>
+                    <input type="text" id="longitude" name="Longitude" placeholder="Click button above to auto-fill" required>
+                    <small id="distanceStatus" style="color: #2980b9; font-weight: bold; display: none; margin-top: 5px;"></small>
+                    </div>
                 </div>
             </div>
 
@@ -160,14 +229,19 @@
                 <h2>🔍 Crack Info</h2>
                 <div class="crack-table">
                     <table>
-                        <thead><tr><th>Crack ID</th><th>Length (mm)</th><th>Width (mm)</th><th>Nature</th></tr></thead>
+                        <thead><tr><th>Crack ID</th><th>Length (mm)</th><th>Width (mm)</th><th>Nature</th><th>Photo</th></tr></thead>
                         <tbody id="crackBody">
                             <tr>
-                                <td><input type="text" name="Crack1_ID" class="crack-input" placeholder="e.g., C1"></td>
+                            <td><input type="text" name="Crack1_ID" class="crack-input" placeholder="e.g., C1"></td>
                                 <td><input type="number" name="Crack1_Length" class="crack-input" step="0.1" placeholder="e.g., 5.5"></td>
                                 <td><input type="number" name="Crack1_Width" class="crack-input" step="0.1" placeholder="e.g., 1.2"></td>
                                 <td><input type="text" name="Crack1_Nature" class="crack-input" placeholder="e.g., Deep"></td>
-                            </tr>
+                                <td style="text-align: center;">
+                                <input type="file" id="crackPhotoInput1" accept="image/*" capture="environment" style="display: none;" onchange="previewImage(this, 'crackPhotoPreview1')">
+                                <button type="button" class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput1').click()">📷</button>
+                            <div id="crackPhotoPreview1" class="photo-preview" style="justify-content: center;"></div>
+                        </td>
+                    </tr>
                         </tbody>
                     </table>
                     <button type="button" class="btn-add" onclick="addCrackRow()">+ Add Another Crack</button>
@@ -211,34 +285,62 @@ document.getElementById('structureForm').addEventListener('submit', async functi
     const formData = new FormData(this);
     const data = {};
     
+    // Collect all text/number inputs
     for (let [key, value] of formData.entries()) {
         if (key !== 'photos') data[key] = value;
     }
 
-    // Collect crack info
+    // 1. Collect Crack Info text
     let crackInfo = "";
+    let crackPhotoFiles = [];
     const crackInputs = document.querySelectorAll('#crackBody tr');
+    
     crackInputs.forEach((row, index) => {
-        const id = row.querySelector(`[name="Crack${index+1}_ID"]`).value;
-        if (id) {
+        const idInput = row.querySelector(`[name="Crack${index+1}_ID"]`);
+        if (idInput && idInput.value) {
             const len = row.querySelector(`[name="Crack${index+1}_Length"]`).value;
             const wid = row.querySelector(`[name="Crack${index+1}_Width"]`).value;
             const nat = row.querySelector(`[name="Crack${index+1}_Nature"]`).value;
-            crackInfo += `Crack ${index+1}: ID=${id}, Length=${len}mm, Width=${wid}mm, Nature=${nat} | `;
+            crackInfo += `Crack ${index+1}: ID=${idInput.value}, Length=${len}mm, Width=${wid}mm, Nature=${nat} | `;
+            
+            // Collect crack photo if it exists
+            const fileInput = row.querySelector('input[type="file"]');
+            if (fileInput && fileInput.files[0]) {
+                crackPhotoFiles.push(fileInput.files[0]);
+            }
         }
     });
     data.crack_info = crackInfo;
 
-    // Upload photos to ImgBB
-    const fileInput = document.getElementById('photos');
-    const files = fileInput.files;
-    const uploadPromises = [];
+    // 2. Prepare all files for upload
+    let allUploads = [];
+    
+    // General photos
+    const generalFileInput = document.getElementById('photos');
+    if (generalFileInput.files.length > 0) {
+        for (let file of generalFileInput.files) allUploads.push({ file, type: 'general' });
+    }
 
-    if (files.length > 0) {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-            const promise = new Promise((resolve, reject) => {
+    // House photo
+    const houseFileInput = document.getElementById('housePhotoInput');
+    if (houseFileInput.files[0]) {
+        allUploads.push({ file: houseFileInput.files[0], type: 'house' });
+    }
+
+    // Crack photos
+    crackPhotoFiles.forEach(file => {
+        allUploads.push({ file, type: 'crack' });
+    });
+
+    // 3. Upload all files to ImgBB
+    let generalUrls = [];
+    let houseUrl = "";
+    let crackUrls = [];
+
+    if (allUploads.length > 0) {
+        const uploadPromises = allUploads.map(item => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
                 reader.onload = function(e) {
                     const base64 = e.target.result.split(',')[1]; 
                     const imgFormData = new FormData();
@@ -251,22 +353,37 @@ document.getElementById('structureForm').addEventListener('submit', async functi
                     })
                     .then(response => response.json())
                     .then(result => {
-                        if(result.success) resolve(result.data.url);
-                        else reject('ImgBB upload failed');
+                        if(result.success) {
+                            resolve({ url: result.data.url, type: item.type });
+                        } else reject('ImgBB upload failed');
                     })
                     .catch(err => reject(err));
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(item.file);
             });
-            uploadPromises.push(promise);
+        });
+
+        try {
+            const results = await Promise.all(uploadPromises);
+            results.forEach(res => {
+                if (res.type === 'general') generalUrls.push(res.url);
+                if (res.type === 'house') houseUrl = res.url;
+                if (res.type === 'crack') crackUrls.push(res.url);
+            });
+        } catch (err) {
+            alert('Error uploading photos: ' + err.message);
+            btn.textContent = originalText;
+            btn.disabled = false;
+            return;
         }
     }
 
-    try {
-        const photoUrls = await Promise.all(uploadPromises);
-        data.photo_links = photoUrls.join(', ');
+    data.photo_links = generalUrls.join(', ');
+    data.house_photo_url = houseUrl;
+    data.crack_photos = crackUrls.join(', ');
 
-        // Save to Supabase
+    // 4. Save to Supabase
+    try {
         const { error } = await supabaseClient
             .from('submissions')
             .insert([{
@@ -290,7 +407,9 @@ document.getElementById('structureForm').addEventListener('submit', async functi
                 latitude: data.Latitude,
                 longitude: data.Longitude,
                 crack_info: data.crack_info,
-                photo_links: data.photo_links
+                photo_links: data.photo_links,
+                house_photo_url: data.house_photo_url, // NEW
+                crack_photos: data.crack_photos         // NEW
             }]);
 
         if (error) throw error;
@@ -298,6 +417,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
         alert('Form submitted successfully!');
         this.reset();
         document.getElementById('photoPreview').innerHTML = '';
+        document.getElementById('housePhotoPreview').innerHTML = '';
         btn.textContent = originalText;
         btn.disabled = false;
         window.location.href = 'summary.html';
@@ -310,22 +430,67 @@ document.getElementById('structureForm').addEventListener('submit', async functi
     }
 });
 
-function captureGPS() {
+async function captureGPS() {
+    const distElement = document.getElementById('distanceStatus');
+    distElement.style.display = 'none'; // Hide previous message
+
     if (navigator.geolocation) {
-        const btn = document.querySelector('.btn-gps');
-        btn.textContent = 'Locating...';
-        navigator.geolocation.getCurrentPosition(function(position) {
-            document.getElementById('latitude').value = position.coords.latitude;
-            document.getElementById('longitude').value = position.coords.longitude;
-            btn.textContent = ' Capture GPS';
+        navigator.geolocation.getCurrentPosition(async function(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lon;
+
+            // Fetch the last survey from Supabase to calculate distance
+            try {
+                const { data, error } = await supabaseClient
+                    .from('submissions')
+                    .select('latitude, longitude')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (data && data.length > 0 && !error) {
+                    const lastLat = data[0].latitude;
+                    const lastLon = data[0].longitude;
+                    
+                    // Calculate distance
+                    const dist = getDistanceFromLatLonInKm(lastLat, lastLon, lat, lon);
+                    
+                    distElement.style.display = 'block';
+                    distElement.textContent = `📍 Distance from last survey: ${dist} km`;
+                } else {
+                    // If it's the very first survey
+                    distElement.style.display = 'block';
+                    distElement.textContent = `📍 This is your first survey point!`;
+                }
+            } catch (err) {
+                console.log("Could not fetch previous location:", err);
+            }
+
         }, function(error) {
-            alert("Error getting location: " + error.message);
-            btn.textContent = '📡 Capture GPS';
+            alert("Error capturing GPS: " + error.message);
         });
     } else {
         alert("Geolocation is not supported by this browser.");
     }
 }
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);
+    var dLon = deg2rad(lon2-lon1); 
+    var a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; 
+    return d.toFixed(2); // Returns distance in km with 2 decimals
+}
+function deg2rad(deg) {
+    return deg * (Math.PI/180);
+}   
 
 function addCrackRow() {
     const tbody = document.getElementById('crackBody');
@@ -336,7 +501,26 @@ function addCrackRow() {
         <td><input type="number" name="Crack${count}_Length" class="crack-input" step="0.1" placeholder="e.g., 5.5"></td>
         <td><input type="number" name="Crack${count}_Width" class="crack-input" step="0.1" placeholder="e.g., 1.2"></td>
         <td><input type="text" name="Crack${count}_Nature" class="crack-input" placeholder="e.g., Deep"></td>
+        <td style="text-align: center;">
+            <input type="file" id="crackPhotoInput${count}" accept="image/*" capture="environment" style="display: none;" onchange="previewImage(this, 'crackPhotoPreview${count}')">
+            <button type="button" class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput${count}').click()">📷</button>
+            <div id="crackPhotoPreview${count}" class="photo-preview" style="justify-content: center;"></div>
+        </td>
     `;
+}
+
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    preview.innerHTML = ''; 
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            preview.appendChild(img);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
 function previewPhotos(event) {

@@ -19,16 +19,55 @@
         .btn-home { background: #2980b9; padding: 10px 20px; margin-top: 20px; text-decoration: none; display: inline-block; }
         .details { display: none; background: #f0f8ff; padding: 15px; margin-top: 10px; border-left: 4px solid #2980b9; }
         .loading { text-align: center; padding: 40px; color: #888; font-size: 18px; }
+
+    .nav-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-blue { background: #3498db; color: white; }
+.btn-blue:hover { background: #2980b9; }
+
+.btn-green { background: #27ae60; color: white; }
+.btn-green:hover { background: #229954; }
+
+.btn-red { background: #e74c3c; color: white; }
+.btn-red:hover { background: #c0392b; }
     </style>
 </head>
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-    <h3 style="color: #2c3e50; margin: 0;">Structure App</h3>
-    <div>
-        <a href="summary.html" style="text-decoration: none; background: #2980b9; color: white; padding: 8px 15px; border-radius: 4px; margin-right: 10px; font-weight: bold;">📋 View Data</a>
-        <a href="index.html" style="text-decoration: none; background: #27ae60; color: white; padding: 8px 15px; border-radius: 4px; font-weight: bold;">📝 Submit Form</a>
-        <a href="login.html" onclick="logoutUser()" style="text-decoration: none; background: #e74c3c; color: white; padding: 8px 15px; border-radius: 4px; margin-left: 10px; font-weight: bold;"> Logout</a>
+        <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="/image/logo.jpeg" alt="Logo" style="height: 40px; width: auto;">
+    <h3 style="color: #2c3e50; margin: 0;"></h3>
+</div>
+    <div class="nav-container">
+    <a href="summary.html" class="nav-btn btn-blue">View Data</a>
+    <a href="index.html" class="nav-btn btn-green">Submit Form</a>
+    <a href="login.html" onclick="logoutUser()" class="nav-btn btn-red">Logout</a>
     </div>
 </div>
         <h1>📋 Structure Submissions</h1>
@@ -117,21 +156,49 @@ function displayTable(submissions) {
                         <p><strong>Wall Strength:</strong> ${sub.wall_strength || 'N/A'}</p>
                         <p><strong>Latitude:</strong> ${sub.latitude || 'N/A'} | <strong>Longitude:</strong> ${sub.longitude || 'N/A'}</p>
                         ${sub.crack_info ? `<p><strong>Crack Info:</strong> ${sub.crack_info}</p>` : ''}
-                        ${sub.photo_links ? `
-                            <p><strong>Photos:</strong></p>
-                            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                                   ${sub.photo_links.split(',').map((url, idx) => `
-       <div style="position:relative; display:inline-block;">
-                           <img src="${url.trim()}" style="width:150px; height:150px; object-fit:cover; border-radius:4px; border:1px solid #ddd;">
-                           <button onclick="downloadImage('${url.trim()}', '${sub.structure_id}_${idx}')" 
-                                   style="position:absolute; top:5px; right:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">
-                               ⬇️ Download
-                           </button>
-                       </div>
-                   `).join('')}
-                            </div>
-                        ` : '<p>No photos uploaded</p>'}
-                    </div>
+                        <!-- House Photo -->
+${sub.house_photo_url ? `
+    <p><strong>🏠 House Photo:</strong></p>
+    <div style="margin-bottom: 15px;">
+        <img src="${sub.house_photo_url.trim()}" style="width: 100%; max-width: 300px; border-radius: 4px; border: 1px solid #ddd;">
+    </div>
+` : ''}
+
+<!-- Crack Photos -->
+${sub.crack_photos ? `
+    <p><strong>🔍 Crack Photos:</strong></p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 15px;">
+        ${sub.crack_photos.split(',').map((url, idx) => `
+            <img src="${url.trim()}" style="width:150px; height:150px; object-fit:cover; border-radius:4px; border:1px solid #ddd;">
+        `).join('')}
+    </div>
+` : ''}
+
+<!-- Distance Calculator -->
+<div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db;">
+    <p><strong>📏 Calculate Distance to Another Structure:</strong></p>
+    <select id="distanceTarget${sub.structure_id}" onchange="calculateDistanceBetweenStructures('${sub.structure_id}', this.value)" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-top: 10px;">
+        <option value="">Select a structure to calculate distance...</option>
+    </select>
+    <div id="distanceResult${sub.structure_id}" style="margin-top: 10px; font-weight: bold; color: #2980b9; display: none;"></div>
+</div>
+
+<!-- General Photos -->
+${sub.photo_links ? `
+    <p><strong>📸 General Photos:</strong></p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+        ${sub.photo_links.split(',').map((url, idx) => `
+            <div style="position:relative; display:inline-block;">
+                <img src="${url.trim()}" style="width:150px; height:150px; object-fit:cover; border-radius:4px; border:1px solid #ddd;">
+                <button onclick="downloadImage('${url.trim()}', '${sub.structure_id}_gen_${idx}')"
+                        style="position:absolute; top:5px; right:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">
+                    ⬇️ Download
+                </button>
+            </div>
+        `).join('')}
+    </div>
+` : (sub.house_photo_url || sub.crack_photos ? '' : '<p>No photos uploaded</p>')}                    
+</div>
                 </td>
             </tr>
         `;
@@ -139,6 +206,10 @@ function displayTable(submissions) {
     
     html += `</tbody></table>`;
     container.innerHTML = html;
+    // Activate the dropdowns after the table is drawn
+submissions.forEach(sub => {
+    setTimeout(() => populateDistanceDropdown(sub.structure_id, submissions), 100);
+});
     container.classList.remove('loading');
 }
 
@@ -149,7 +220,65 @@ function showDetails(index) {
 
 // Load data when page loads
 loadData();
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; 
+    var dLat = deg2rad(lat2-lat1);
+    var dLon = deg2rad(lon2-lon1); 
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    return (R * c).toFixed(2);
+}
 
+function deg2rad(deg) { return deg * (Math.PI/180); }
+
+async function calculateDistanceBetweenStructures(currentStructureId, targetId) {
+    if (!targetId) return;
+
+    const resultDiv = document.getElementById(`distanceResult${currentStructureId}`);
+    resultDiv.style.display = 'block';
+    resultDiv.textContent = 'Calculating...';
+
+    try {
+        const { data: structures, error } = await supabaseClient
+            .from('submissions')
+            .select('structure_id, latitude, longitude');
+
+        if (error) throw error;
+
+        const currentStruct = structures.find(s => s.structure_id === currentStructureId);
+        const targetStruct = structures.find(s => s.structure_id === targetId);
+
+        if (currentStruct && targetStruct && currentStruct.latitude && targetStruct.latitude) {
+            const distance = getDistanceFromLatLonInKm(
+                parseFloat(currentStruct.latitude), parseFloat(currentStruct.longitude),
+                parseFloat(targetStruct.latitude), parseFloat(targetStruct.longitude)
+            );
+            resultDiv.textContent = ` Distance: ${distance} km`;
+            resultDiv.style.color = '#27ae60';
+        } else {
+            resultDiv.textContent = '️ GPS coordinates not available';
+            resultDiv.style.color = '#e74c3c';
+        }
+    } catch (err) {
+        resultDiv.textContent = 'Error calculating distance';
+        resultDiv.style.color = '#e74c3c';
+    }
+}
+
+function populateDistanceDropdown(currentStructureId, allSubmissions) {
+    const dropdown = document.getElementById(`distanceTarget${currentStructureId}`);
+    if (!dropdown) return;
+
+    dropdown.innerHTML = '<option value="">Select a structure to calculate distance...</option>';
+    const allStructures = allSubmissions.filter(s => s.structure_id !== currentStructureId);
+
+    allStructures.forEach(struct => {
+        const option = document.createElement('option');
+        option.value = struct.structure_id;
+        option.textContent = `${struct.structure_id} - ${struct.owner || 'Unknown Owner'}`;
+        dropdown.appendChild(option);
+    });
+}
    async function downloadImage(url, filename) {
        try {
            const response = await fetch(url);
