@@ -369,20 +369,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             return;
         }
     }
-        try {
-            const results = await Promise.all(uploadPromises);
-            results.forEach(res => {
-                if (res.type === 'general') generalUrls.push(res.url);
-                if (res.type === 'house') houseUrl = res.url;
-                if (res.type === 'crack') crackUrls.push(res.url);
-            });
-        } catch (err) {
-            alert('Error uploading photos: ' + err.message);
-            btn.textContent = originalText;
-            btn.disabled = false;
-            return;
-        }
-    }
+        
 
     data.photo_links = generalUrls.join(', ');
     data.house_photo_url = houseUrl;
