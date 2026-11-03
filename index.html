@@ -337,32 +337,38 @@ document.getElementById('structureForm').addEventListener('submit', async functi
     let houseUrl = "";
     let crackUrls = [];
 
-    if (allUploads.length > 0) {
-        const uploadPromises = allUploads.map(item => {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result.split(',')[1]; 
-                    const imgFormData = new FormData();
-                    imgFormData.append('key', 'de273eabd124c3aa867b43bae135a743');
-                    imgFormData.append('image', base64);
+        if (allUploads.length > 0) {
+        const uploadPromises = allUploads.map(async (item) => {
+            const file = item.file;
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            
+            const { data, error } = await supabaseClient.storage
+                .from('images')
+                .upload(fileName, file);
 
-                    fetch('https://api.imgbb.com/1/upload', {
-                        method: 'POST',
-                        body: imgFormData
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        if(result.success) {
-                            resolve({ url: result.data.url, type: item.type });
-                        } else reject('ImgBB upload failed');
-                    })
-                    .catch(err => reject(err));
-                };
-                reader.readAsDataURL(item.file);
-            });
+            if (error) throw error;
+
+            const { data: { publicUrl } } = supabaseClient.storage
+                .from('images')
+                .getPublicUrl(fileName);
+
+            return { url: publicUrl, type: item.type };
         });
 
+        try {
+            const results = await Promise.all(uploadPromises);
+            results.forEach(res => {
+                if (res.type === 'general') generalUrls.push(res.url);
+                if (res.type === 'house') houseUrl = res.url;
+                if (res.type === 'crack') crackUrls.push(res.url);
+            });
+        } catch (err) {
+            alert('Error uploading photos to secure storage: ' + err.message);
+            btn.textContent = originalText;
+            btn.disabled = false;
+            return;
+        }
+    }
         try {
             const results = await Promise.all(uploadPromises);
             results.forEach(res => {
