@@ -116,83 +116,85 @@
                 </div>
                 <div class="form-group"><label>Digital Address</label><input type="text" name="Digital_Address" placeholder="e.g., GA-123-4567"></div>
             </div>
-            <h2>🧱 Materials</h2>
+            
+                        <h2>🧱 Materials</h2>
             <div class="form-row">
                 <div class="form-group">
-                <label>Age *</label>
-                <input type="text" name="Age" list="age-options" placeholder="Select or type..." required>
-        <datalist id="age-options">
-            <option value="Very old">
-            <option value="Old">
-            <option value="Fairly new">
-            <option value="New">
-        </datalist>
-        </div>
-    <div class="form-group">
-        <label>Type *</label>
-        <input type="text" name="Type" list="type-options" placeholder="Select or type..." required>
-        <datalist id="type-options">
-            <option value="Residential">
-            <option value="Commercial">
-            <option value="Industrial">
-            <option value="Mixed Use">
-        </datalist>
-    </div>
-</div>
-    <div class="form-row">
-    <div class="form-group">
-        <label>Plaster Type *</label>
-        <input type="text" name="Plaster_Type" list="plaster-options" placeholder="Select or type..." required>
-        <datalist id="plaster-options">
-            <option value="Cement">
-            <option value="Mud">
-            <option value="None">
-        </datalist>
-    </div>
-    <div class="form-group">
-        <label>Roof *</label>
-        <input type="text" name="Roof" list="roof-options" placeholder="Select or type..." required>
-        <datalist id="roof-options">
-            <option value="Iron Sheet">
-            <option value="Tiles">
-            <option value="Thatch">
-            <option value="Asbestos">
-        </datalist>
-    </div>
-</div>
-<div class="form-row">
-    <div class="form-group">
-        <label>Floor *</label>
-        <input type="text" name="Floor" list="floor-options" placeholder="Select or type..." required>
-        <datalist id="floor-options">
-            <option value="Cement">
-            <option value="Tiles">
-            <option value="Earth">
-            <option value="Wood">
-        </datalist>
-    </div>
-    <div class="form-group">
-        <label>Door *</label>
-        <input type="text" name="Door" list="door-options" placeholder="Select or type..." required>
-        <datalist id="door-options">
-            <option value="Wooden">
-            <option value="Metal">
-            <option value="Glass">
-        </datalist>
-    </div>
-</div>
-<div class="form-row">
-    <div class="form-group">
-        <label>Window *</label>
-        <input type="text" name="Window" list="window-options" placeholder="Select or type..." required>
-        <datalist id="window-options">
-            <option value="Wooden">
-            <option value="Metal">
-            <option value="Glass">
-        </datalist>
-    </div>
-  
-</div>
+                    <label>Age *</label>
+                    <select name="Age" required>
+                        <option value="" disabled selected>Select or type...</option>
+                        <option value="Very old">Very old</option>
+                        <option value="Old">Old</option>
+                        <option value="Fairly new">Fairly new</option>
+                        <option value="New">New</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select name="Type" required>
+                        <option value="" disabled selected>Select or type...</option>
+                        <option value="Residential">Residential</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Industrial">Industrial</option>
+                        <option value="Mixed Use">Mixed Use</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Plaster Type *</label>
+                    <select name="Plaster_Type" required>
+                        <option value="" disabled selected>Select or type...</option>
+                        <option value="Cement">Cement</option>
+                        <option value="Mud">Mud</option>
+                        <option value="None">None</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Roof *</label>
+                    <select name="Roof" required>
+                        <option value="" disabled selected>Select or type...</option>
+                        <option value="Iron Sheet">Iron Sheet</option>
+                        <option value="Tiles">Tiles</option>
+                        <option value="Thatch">Thatch</option>
+                        <option value="Asbestos">Asbestos</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Floor *</label>
+                    <select name="Floor" required>
+                        <option value="" disabled selected>Select or type...</option>
+                        <option value="Cement">Cement</option>
+                        <option value="Tiles">Tiles</option>
+                        <option value="Earth">Earth</option>
+                        <option value="Wood">Wood</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Door *</label>
+                    <select name="Door" required>
+                        <option value="" disabled selected>Select or type...</option>
+                        <option value="Wooden">Wooden</option>
+                        <option value="Metal">Metal</option>
+                        <option value="Glass">Glass</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Window *</label>
+                    <select name="Window" required>
+                        <option value="" disabled selected>Select or type...</option>
+                        <option value="Wooden">Wooden</option>
+                        <option value="Metal">Metal</option>
+                        <option value="Glass">Glass</option>
+                    </select>
+                </div>
+                <div class="form-group"></div>
+            </div>
+            
             <div class="form-section">
                 <h2>🏗️ Foundation</h2>
                 <div class="form-row">
