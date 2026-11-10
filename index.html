@@ -261,8 +261,8 @@
                                 <td><input type="number" name="Crack1_Width" class="crack-input" step="0.1" placeholder="e.g., 1.2"></td>
                                 <td><input type="text" name="Crack1_Nature" class="crack-input" placeholder="e.g., Deep"></td>
                                 <td style="text-align: center;">
-                                <input type="file" id="crackPhotoInput1" accept="image/*" capture="environment" style="display: none;" onchange="previewImage(this, 'crackPhotoPreview1')">
-                                <button type="button" class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput1').click()">📷</button>
+                                <input type="file" id="crackPhotoInput1" accept="image/*" multiple style="display: none;" onchange="handleCrackPhotos(this, 'crackPhotoPreview1')">
+                            <button type="button"class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput1').click()">📸 Add</button>                                
                             <div id="crackPhotoPreview1" class="photo-preview" style="justify-content: center;"></div>
                         </td>
                     </tr>
@@ -519,9 +519,11 @@ function addCrackRow() {
         <td><input type="number" name="Crack${count}_Width" class="crack-input" step="0.1" placeholder="e.g., 1.2"></td>
         <td><input type="text" name="Crack${count}_Nature" class="crack-input" placeholder="e.g., Deep"></td>
         <td style="text-align: center;">
-            <input type="file" id="crackPhotoInput${count}" accept="image/*" capture="environment" style="display: none;" onchange="previewImage(this, 'crackPhotoPreview${count}')">
-            <button type="button" class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput${count}').click()">📷</button>
-            <div id="crackPhotoPreview${count}" class="photo-preview" style="justify-content: center;"></div>
+
+        <input type="file" id="crackPhotoInput${count}" accept="image/*" multiple style="display: none;" onchange="handleCrackPhotos(this, 'crackPhotoPreview${count}')">
+        <button type="button" class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput${count}').click()">📸 Add</button>
+            
+        <div id="crackPhotoPreview${count}" class="photo-preview" style="justify-content: center;"></div>
         </td>
     `;
 }
@@ -578,6 +580,45 @@ function handleHousePhotos(input) {
             img.style.height = '100px';
             img.style.objectFit = 'cover';
             img.style.marginRight = '10px';
+            img.style.borderRadius = '4px';
+            preview.appendChild(img);
+        }
+        reader.readAsDataURL(file);
+    });
+
+    // Clear the input value so you can select the same file again if you want
+    input.value = '';
+}
+
+// This object will hold all your crack photos, organized by row
+let crackPhotoFiles = {}; 
+
+function handleCrackPhotos(input, previewId) {
+    // Initialize the list for this specific crack row if it doesn't exist
+    if (!crackPhotoFiles[previewId]) {
+        crackPhotoFiles[previewId] = [];
+    }
+
+    const preview = document.getElementById(previewId);
+    
+    // Add the newly selected files to our list
+    for (let file of input.files) {
+        crackPhotoFiles[previewId].push(file);
+    }
+
+    // Clear the current preview so we can redraw it
+    preview.innerHTML = '';
+
+    // Show all the images we have collected for this row
+    crackPhotoFiles[previewId].forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '80px';
+            img.style.height = '80px';
+            img.style.objectFit = 'cover';
+            img.style.marginRight = '5px';
             img.style.borderRadius = '4px';
             preview.appendChild(img);
         }
