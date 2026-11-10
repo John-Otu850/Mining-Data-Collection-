@@ -75,7 +75,7 @@
         <div style="text-align: center;">
             <a href="index.html" class="btn btn-home">Go to Form</a>
 
-            <button onclick="downloadExcel()" class="btn btn-home" style="background-color: #28a745; color: white;">Download as Excel</button>
+            <button onclick="downloadFullExcel()" class="btn btn-home" style="background-color: #28a745; color: white;">Download as Excel</button>
         </div>
     </div>
 
@@ -305,27 +305,60 @@ function populateDistanceDropdown(currentStructureId, allSubmissions) {
 }
     </script>
 
-
-
 <script>
-function downloadExcel() {
-  let table = document.querySelector("table");
-  let csv = [];
-  let rows = table.querySelectorAll("tr");
-  
-  for (let i = 0; i < rows.length; i++) {
-    let row = [], cols = rows[i].querySelectorAll("td, th");
-    for (let j = 0; j < cols.length - 1; j++) { 
-      row.push('"' + cols[j].innerText + '"');
+async function downloadFullExcel() {
+    // 1. Fetch all data directly from Supabase
+    // IMPORTANT: If your table in Supabase is named something else (like 'structures'), change 'submissions' below to that name.
+    const { data, error } = await supabaseClient.from('submissions').select('*');
+
+    if (error) {
+        alert('Error getting data: ' + error.message);
+        return;
     }
-    csv.push(row.join(","));
-  }
-  
-  let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-  let downloadLink = document.createElement("a");
-  downloadLink.download = "Structure_Submissions.csv";
-  downloadLink.href = window.URL.createObjectURL(csvFile);
-  downloadLink.click();
+
+    // 2. Create the header row for Excel
+    // These are the column names that will appear at the top of your Excel file
+    let csvContent = "Date,Structure ID,Owner,House No,Digital Address,Age,Type,Dimensions,Wall,Plaster,Roof,Floor,Door,Window,Foundation,Wall Strength,Latitude,Longitude,Crack Info\n";
+
+    // 3. Loop through every person and add their details
+    data.forEach(row => {
+        // This helper function fixes text so it doesn't break the Excel file
+        let clean = (text) => '"' + (text || '').toString().replace(/"/g, '""') + '"';
+
+        let rowString = [
+            clean(row.created_at), 
+            clean(row.structure_id),
+            clean(row.owner),
+            clean(row.house_no),
+            clean(row.digital_address),
+            clean(row.age),
+            clean(row.type),
+            clean(row.dimensions),
+            clean(row.wall),
+            clean(row.plaster),
+            clean(row.roof),
+            clean(row.floor),
+            clean(row.door),
+            clean(row.window),
+            clean(row.foundation),
+            clean(row.wall_strength),
+            clean(row.latitude),
+            clean(row.longitude),
+            clean(row.crack_info)
+        ].join(",");
+
+        csvContent += rowString + "\n";
+    });
+
+    // 4. Create the file and download it
+    let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    let link = document.createElement("a");
+    let url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "Full_Structure_Data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 </script>
 </body>
