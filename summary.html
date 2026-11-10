@@ -74,6 +74,8 @@
         <div id="tableContainer" class="loading">Loading data from Google Sheet...</div>
         <div style="text-align: center;">
             <a href="index.html" class="btn btn-home">Go to Form</a>
+
+            <button onclick="downloadExcel()" class="btn btn-home" style="background-color: #28a745; color: white;">Download as Excel</button>
         </div>
     </div>
 
@@ -302,5 +304,29 @@ function populateDistanceDropdown(currentStructureId, allSubmissions) {
     localStorage.removeItem('userRole');
 }
     </script>
+
+
+
+<script>
+function downloadExcel() {
+  let table = document.querySelector("table");
+  let csv = [];
+  let rows = table.querySelectorAll("tr");
+  
+  for (let i = 0; i < rows.length; i++) {
+    let row = [], cols = rows[i].querySelectorAll("td, th");
+    for (let j = 0; j < cols.length - 1; j++) { 
+      row.push('"' + cols[j].innerText + '"');
+    }
+    csv.push(row.join(","));
+  }
+  
+  let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+  let downloadLink = document.createElement("a");
+  downloadLink.download = "Structure_Submissions.csv";
+  downloadLink.href = window.URL.createObjectURL(csvFile);
+  downloadLink.click();
+}
+</script>
 </body>
 </html>
