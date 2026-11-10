@@ -75,10 +75,13 @@
         <div style="text-align: center;">
             <a href="index.html" class="btn btn-home">Go to Form</a>
 
-            <button onclick="downloadFullExcel()" class="btn btn-home" style="background-color: #28a745; color: white;">Download as Excel</button>
+            <button onclick="downloadFullExcel()" class="btn btn-home" style="background-color: #28a745; color: white; margin-right: 10px;">Download as Excel</button>
+            <button onclick="generatePDF()" class="btn btn-home" style="background-color: #e74c3c; color: white;">Download as PDF</button>
+            
         </div>
     </div>
 
+    
     <script>
         // Security Check: If not logged in, go to login page
 if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -359,6 +362,98 @@ async function downloadFullExcel() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+async function generatePDF() {
+    // Fetch all data from Supabase
+    const { data, error } = await supabaseClient.from('submissions').select('*');
+    
+    if (error) {
+        alert('Error: ' + error.message);
+        return;
+    }
+    
+    // Create a new window
+    let printWindow = window.open('', '_blank');
+    
+    // Build the HTML with all details
+    let htmlContent = `
+    <html>
+    <head>
+        <title>Structure Submissions Report</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            .detail-box { 
+                border: 2px solid #2c3e50; 
+                border-radius: 8px; 
+                padding: 15px; 
+                margin-bottom: 20px; 
+                background: #f8f9fa;
+            }
+            .detail-box h3 { 
+                color: #2c3e50; 
+                margin-top: 0; 
+                border-bottom: 2px solid #3498db; 
+                padding-bottom: 10px;
+            }
+            .detail-row { 
+                margin: 8px 0; 
+                padding: 5px 0;
+                border-bottom: 1px solid #ddd;
+            }
+            .detail-row:last-child { border-bottom: none; }
+            .label { font-weight: bold; color: #2c3e50; }
+            @media print {
+                .no-print { display: none; }
+            }
+        </style>
+    </head>
+    <body>
+        <h1 style="color: #2c3e50; text-align: center;">📋 Structure Submissions Report</h1>
+        <p style="text-align: center; color: #7f8c8d;">Total Submissions: ${data.length}</p>
+        <hr>
+    `;
+    
+    // Add each submission
+    data.forEach((row, index) => {
+        htmlContent += `
+        <div class="detail-box">
+            <h3>Submission #${index + 1} - ${row.structure_id || 'N/A'}</h3>
+            <div class="detail-row"><span class="label">Date:</span> ${row.created_at || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Owner:</span> ${row.owner || 'N/A'}</div>
+            <div class="detail-row"><span class="label">House No:</span> ${row.house_no || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Digital Address:</span> ${row.digital_address || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Age:</span> ${row.age || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Type:</span> ${row.type || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Dimensions:</span> ${row.dimensions || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Wall:</span> ${row.wall || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Plaster:</span> ${row.plaster || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Roof:</span> ${row.roof || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Floor:</span> ${row.floor || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Door:</span> ${row.door || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Window:</span> ${row.window || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Foundation:</span> ${row.foundation || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Wall Strength:</span> ${row.wall_strength || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Latitude:</span> ${row.latitude || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Longitude:</span> ${row.longitude || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Crack Info:</span> ${row.crack_info || 'N/A'}</div>
+        </div>
+        `;
+    });
+    
+    // Add print button
+    htmlContent += `
+        <div class="no-print" style="text-align: center; margin: 20px;">
+            <button onclick="window.print()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">🖨️ Print or Save as PDF</button>
+            <button onclick="window.close()" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;">Close</button>
+        </div>
+    </body>
+    </html>
+    `;
+    
+    // Write and show the window
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
 }
 </script>
 </body>
