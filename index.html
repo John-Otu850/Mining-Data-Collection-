@@ -316,7 +316,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
 
     // 1. Collect Crack Info text
     let crackInfo = "";
-    let crackPhotoFiles = [];
+
     const crackInputs = document.querySelectorAll('#crackBody tr');
     
     crackInputs.forEach((row, index) => {
@@ -328,7 +328,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             crackInfo += `Crack ${index+1}: ID=${idInput.value}, Length=${len}mm, Width=${wid}mm, Nature=${nat} | `;
             
             
-            
+
         }
     });
     data.crack_info = crackInfo;
