@@ -327,11 +327,8 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             const nat = row.querySelector(`[name="Crack${index+1}_Nature"]`).value;
             crackInfo += `Crack ${index+1}: ID=${idInput.value}, Length=${len}mm, Width=${wid}mm, Nature=${nat} | `;
             
-            // Collect crack photo if it exists
-            const fileInput = row.querySelector('input[type="file"]');
-            if (fileInput && fileInput.files[0]) {
-                crackPhotoFiles.push(fileInput.files[0]);
-            }
+            
+            
         }
     });
     data.crack_info = crackInfo;
