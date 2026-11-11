@@ -324,6 +324,7 @@ async function downloadFullExcel() {
     table += '<th>Age</th><th>Type</th><th>Wall</th><th>Plaster</th><th>Roof</th><th>Floor</th>';
     table += '<th>Door</th><th>Window</th><th>Foundation</th><th>Wall Strength</th>';
     table += '<th>Latitude</th><th>Longitude</th><th>Crack Info</th>';
+    table += '<th>Photo Link</th><th>House Photo Link</th><th>Crack Photo Link</th>'; // NEW HEADERS
     table += '</tr>';
 
     // Create a row for every person
@@ -347,6 +348,9 @@ async function downloadFullExcel() {
         table += `<td>${row.latitude || ''}</td>`;
         table += `<td>${row.longitude || ''}</td>`;
         table += `<td>${row.crack_info || ''}</td>`;
+        table += `<td>${row.photo_links || ''}</td>`; // NEW
+        table += `<td>${row.house_photo_url || ''}</td>`; // NEW
+        table += `<td>${row.crack_photos || ''}</td>`; // NEW
         table += '</tr>';
     });
 
