@@ -393,6 +393,7 @@ async function generatePDF() {
                 padding: 15px; 
                 margin-bottom: 20px; 
                 background: #f8f9fa;
+                page-break-inside: avoid;
             }
             .detail-box h3 { 
                 color: #2c3e50; 
@@ -407,13 +408,32 @@ async function generatePDF() {
             }
             .detail-row:last-child { border-bottom: none; }
             .label { font-weight: bold; color: #2c3e50; }
+            .photo-section { 
+                margin-top: 15px; 
+                padding: 10px; 
+                background: white; 
+                border-radius: 5px;
+            }
+            .photo-section img { 
+                max-width: 300px; 
+                max-height: 300px; 
+                border: 1px solid #ddd; 
+                border-radius: 4px; 
+                margin: 5px;
+            }
+            .photo-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
             @media print {
                 .no-print { display: none; }
+                .detail-box { page-break-inside: avoid; }
             }
         </style>
     </head>
     <body>
-        <h1 style="color: #2c3e50; text-align: center;">📋 Structure Submissions Report</h1>
+        <h1 style="color: #2c3e50; text-align: center;"> Structure Submissions Report</h1>
         <p style="text-align: center; color: #7f8c8d;">Total Submissions: ${data.length}</p>
         <hr>
     `;
@@ -429,18 +449,35 @@ async function generatePDF() {
             <div class="detail-row"><span class="label">Digital Address:</span> ${row.digital_address || 'N/A'}</div>
             <div class="detail-row"><span class="label">Age:</span> ${row.age || 'N/A'}</div>
             <div class="detail-row"><span class="label">Type:</span> ${row.type || 'N/A'}</div>
-            <div class="detail-row"><span class="label">Dimensions:</span> ${row.dimensions || 'N/A'}</div>
-            <div class="detail-row"><span class="label">Wall:</span> ${row.wall || 'N/A'}</div>
-            <div class="detail-row"><span class="label">Plaster:</span> ${row.plaster || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Wall:</span> ${row.wall_type || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Plaster:</span> ${row.plaster_type || 'N/A'}</div>
             <div class="detail-row"><span class="label">Roof:</span> ${row.roof || 'N/A'}</div>
             <div class="detail-row"><span class="label">Floor:</span> ${row.floor || 'N/A'}</div>
             <div class="detail-row"><span class="label">Door:</span> ${row.door || 'N/A'}</div>
-            <div class="detail-row"><span class="label">Window:</span> ${row.window || 'N/A'}</div>
-            <div class="detail-row"><span class="label">Foundation:</span> ${row.foundation || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Window:</span> ${row.window_type || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Foundation:</span> ${row.foundation_type || 'N/A'}</div>
             <div class="detail-row"><span class="label">Wall Strength:</span> ${row.wall_strength || 'N/A'}</div>
             <div class="detail-row"><span class="label">Latitude:</span> ${row.latitude || 'N/A'}</div>
             <div class="detail-row"><span class="label">Longitude:</span> ${row.longitude || 'N/A'}</div>
             <div class="detail-row"><span class="label">Crack Info:</span> ${row.crack_info || 'N/A'}</div>
+            
+            <!-- House Photo Section -->
+            <div class="photo-section">
+                <strong>🏠 House Photo:</strong><br>
+                ${row.house_photo_url ? `<img src="${row.house_photo_url}" alt="House Photo">` : '<em>No house photo</em>'}
+            </div>
+            
+            <!-- Crack Photos Section -->
+            <div class="photo-section">
+                <strong>🔍 Crack Photos:</strong><br>
+                ${row.crack_photos ? `<div class="photo-grid">${row.crack_photos.split(',').map(url => `<img src="${url.trim()}" alt="Crack Photo">`).join('')}</div>` : '<em>No crack photos</em>'}
+            </div>
+            
+            <!-- General Photos Section -->
+            <div class="photo-section">
+                <strong>📷 General Photos:</strong><br>
+                ${row.photo_links ? `<div class="photo-grid">${row.photo_links.split(',').map(url => `<img src="${url.trim()}" alt="General Photo">`).join('')}</div>` : '<em>No general photos</em>'}
+            </div>
         </div>
         `;
     });
@@ -448,7 +485,7 @@ async function generatePDF() {
     // Add print button
     htmlContent += `
         <div class="no-print" style="text-align: center; margin: 20px;">
-            <button onclick="window.print()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">🖨️ Print or Save as PDF</button>
+            <button onclick="window.print()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">️ Print or Save as PDF</button>
             <button onclick="window.close()" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;">Close</button>
         </div>
     </body>
@@ -459,6 +496,7 @@ async function generatePDF() {
     printWindow.document.write(htmlContent);
     printWindow.document.close();
 }
+
 </script>
 </body>
 </html>
