@@ -336,35 +336,40 @@ document.getElementById('structureForm').addEventListener('submit', async functi
     });
     data.crack_info = crackInfo;
 
-    // 2. Prepare all files for upload
+       // 2. Prepare all files for upload
     let allUploads = [];
     
     // General photos
     const generalFileInput = document.getElementById('photos');
-    if (generalFileInput.files.length > 0) {
-        for (let file of generalFileInput.files) allUploads.push({ file, type: 'general' });
+    if (generalFileInput && generalFileInput.files.length > 0) {
+        for (let file of generalFileInput.files) {
+            allUploads.push({ file, type: 'general' });
+        }
     }
 
-    // House photo
-    const houseFileInput = document.getElementById('housePhotoInput');
-    if (houseFileInput.files[0]) {
-        allUploads.push({ file: houseFileInput.files[0], type: 'house' });
+    // House photos (Use the accumulated array)
+    if (housePhotoFiles.length > 0) {
+        for (let file of housePhotoFiles) {
+            allUploads.push({ file, type: 'house' });
+        }
     }
 
-    // Crack photos
-    crackPhotoFiles.forEach(file => {
-        allUploads.push({ file, type: 'crack' });
+    // Crack photos (Iterate through the object's values, which are arrays of files)
+    Object.values(crackPhotoFiles).forEach(filesArray => {
+        filesArray.forEach(file => {
+            allUploads.push({ file, type: 'crack' });
+        });
     });
 
-    // 3. Upload all files to ImgBB
+    // 3. Upload all files to Supabase Storage
     let generalUrls = [];
-    let houseUrl = "";
+    let houseUrls = []; // Changed to array to support multiple house photos
     let crackUrls = [];
 
-        if (allUploads.length > 0) {
+    if (allUploads.length > 0) {
         const uploadPromises = allUploads.map(async (item) => {
             const file = item.file;
-            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}_${file.name.replace(/\s+/g, '_')}`;
             
             const { data, error } = await supabaseClient.storage
                 .from('images')
@@ -383,7 +388,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             const results = await Promise.all(uploadPromises);
             results.forEach(res => {
                 if (res.type === 'general') generalUrls.push(res.url);
-                if (res.type === 'house') houseUrl = res.url;
+                if (res.type === 'house') houseUrls.push(res.url);
                 if (res.type === 'crack') crackUrls.push(res.url);
             });
         } catch (err) {
@@ -394,9 +399,8 @@ document.getElementById('structureForm').addEventListener('submit', async functi
         }
     }
         
-
     data.photo_links = generalUrls.join(', ');
-    data.house_photo_url = houseUrl;
+    data.house_photo_url = houseUrls.join(', ');
     data.crack_photos = crackUrls.join(', ');
 
     // 4. Save to Supabase
