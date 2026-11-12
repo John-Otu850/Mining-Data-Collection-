@@ -56,6 +56,47 @@
 .btn-red { background: #e74c3c; color: white; }
 .btn-red:hover { background: #c0392b; }
     </style>
+
+<style>
+    /* Mobile Phone Fixes */
+    @media (max-width: 768px) {
+        
+        /* 1. Fix the Top Buttons (View Data, Submit, Logout) */
+        .nav-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+        }
+        .nav-btn {
+            padding: 8px 10px !important;
+            font-size: 12px !important;
+        }
+
+        /* 2. Make the Table Scrollable */
+        #tableContainer {
+            overflow-x: auto; /* Allows scrolling left/right */
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            font-size: 12px; /* Smaller text for phones */
+            min-width: 600px; /* Forces the table to be wide enough to scroll */
+        }
+        th, td {
+            padding: 8px;
+            white-space: nowrap; /* Keeps text on one line */
+        }
+
+        /* 3. Fix the Bottom Buttons (Go to Form, Download) */
+        .btn {
+            display: block;
+            width: 100%; /* Makes buttons full width for easy tapping */
+            margin: 5px 0;
+            box-sizing: border-box;
+            text-align: center;
+        }
+    }
+</style>
 </head>
 <body>
     <div class="container">
