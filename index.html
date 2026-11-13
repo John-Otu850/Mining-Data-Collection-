@@ -384,9 +384,11 @@ document.getElementById('structureForm').addEventListener('submit', async functi
 
         alert(`⚠️ You are offline! Draft saved. You now have ${drafts.length} draft(s) waiting.`);
 
-        btn.textContent = originalText;
-        btn.disabled = false;
-        return; // Stop here
+        this.reset(); 
+   document.getElementById('photoPreview').innerHTML = ''; 
+   btn.textContent = originalText;
+   btn.disabled = false;
+   return; // Stop here
     }
     // --- OFFLINE CHECK END ---
 
@@ -774,6 +776,18 @@ window.addEventListener('online', syncOfflineDrafts);
             statusDiv.style.display = 'none';
         }, 4000);
     }
+
+       // Fix the "Clear Form" button to also clear our custom photo variables
+   document.getElementById('structureForm').addEventListener('reset', function() {
+       // Clear house photos
+       housePhotoFiles = [];
+       document.getElementById('housePhotoPreview').innerHTML = '';
+       
+       // Clear crack photos
+       crackPhotoFiles = {};
+       const crackPreviews = document.querySelectorAll('#crackBody .photo-preview');
+       crackPreviews.forEach(p => p.innerHTML = '');
+   });
 </script>    
 
 </body>
