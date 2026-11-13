@@ -688,45 +688,55 @@ function handleCrackPhotos(input, previewId) {
 }
     
     
-    // --- STEP 3: AUTO-SYNC WHEN ONLINE (NOW WITH PHOTOS) ---
-async function syncOfflineDraft() {
-    const draft = await localforage.getItem('offlineDraft');
-    if (!draft || !navigator.onLine) return;
+    
+    // --- STEP 3: AUTO-SYNC MULTIPLE DRAFTS ---
+async function syncOfflineDrafts() {
+    const drafts = await localforage.getItem('offlineDrafts') || [];
+    if (drafts.length === 0 || !navigator.onLine) return;
 
     const btn = document.getElementById('submitBtn');
-    if (btn) { btn.textContent = '🔄 Syncing saved draft...'; btn.disabled = true; }
+    if (btn) { btn.textContent = `🔄 Syncing ${drafts.length} drafts...`; btn.disabled = true; }
 
-    try {
-        // 1. Upload every saved photo and collect URLs by type
-        let generalUrls = [], houseUrls = [], crackUrls = [];
-        for (const item of draft.files) {
-            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}_${item.file.name.replace(/\s+/g, '_')}`;
-            const { error: upErr } = await supabaseClient.storage.from('images').upload(fileName, item.file);
-            if (upErr) throw upErr;
-            const { data: { publicUrl } } = supabaseClient.storage.from('images').getPublicUrl(fileName);
-            if (item.type === 'general') generalUrls.push(publicUrl);
-            if (item.type === 'house') houseUrls.push(publicUrl);
-            if (item.type === 'crack') crackUrls.push(publicUrl);
+    let successCount = 0;
+
+    // Loop through drafts backwards so we can remove them safely
+    for (let i = drafts.length - 1; i >= 0; i--) {
+        const draft = drafts[i];
+        try {
+            // 1. Upload photos
+            let generalUrls = [], houseUrls = [], crackUrls = [];
+            for (const item of draft.files) {
+                const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}_${item.file.name.replace(/\s+/g, '_')}`;
+                const { error: upErr } = await supabaseClient.storage.from('images').upload(fileName, item.file);
+                if (upErr) throw upErr;
+                const { data: { publicUrl } } = supabaseClient.storage.from('images').getPublicUrl(fileName);
+                if (item.type === 'general') generalUrls.push(publicUrl);
+                if (item.type === 'house') houseUrls.push(publicUrl);
+                if (item.type === 'crack') crackUrls.push(publicUrl);
+            }
+
+            // 2. Insert into database
+            const row = { ...draft.text, photo_links: generalUrls.join(', '), house_photo_url: houseUrls.join(', '), crack_photos: crackUrls.join(', ') };
+            const { error: insErr } = await supabaseClient.from('submissions').insert([row]);
+            if (insErr) throw insErr;
+
+            // 3. Remove this successful draft from the list
+            drafts.splice(i, 1);
+            successCount++;
+        } catch (err) {
+            console.error('Draft failed:', err);
         }
-
-        // 2. Combine text + photo links and insert into database
-        const row = { ...draft.text, photo_links: generalUrls.join(', '), house_photo_url: houseUrls.join(', '), crack_photos: crackUrls.join(', ') };
-        const { error: insErr } = await supabaseClient.from('submissions').insert([row]);
-        if (insErr) throw insErr;
-
-        // 3. Clear the draft so it isn't sent twice
-        await localforage.removeItem('offlineDraft');
-        alert('✅ Internet is back! Your saved form and photos have been sent to the database.');
-    } catch (err) {
-        console.error('Sync failed:', err);
-        alert('⚠️ Sync failed: ' + err.message);
-    } finally {
-        if (btn) { btn.textContent = '📤 Submit Information'; btn.disabled = false; }
     }
+
+    // Save the updated list (in case some failed, they stay in the list for next time)
+    await localforage.setItem('offlineDrafts', drafts);
+
+    if (btn) { btn.textContent = '📤 Submit Information'; btn.disabled = false; }
+    if (successCount > 0) alert(`✅ Internet is back! Sent ${successCount} draft(s) to the database.`);
 }
 
-window.addEventListener('load', syncOfflineDraft);
-window.addEventListener('online', syncOfflineDraft);
+window.addEventListener('load', syncOfflineDrafts);
+window.addEventListener('online', syncOfflineDrafts);
     </script>
 
 <script>
