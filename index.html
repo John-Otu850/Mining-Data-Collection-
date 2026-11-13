@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Structure Information Form</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
@@ -351,14 +352,39 @@ document.getElementById('structureForm').addEventListener('submit', async functi
     data.crack_info = crackInfo;
         // --- OFFLINE CHECK START ---
     if (!navigator.onLine) {
-        // Save the text data to the phone's memory
-        localStorage.setItem('offlineDraft', JSON.stringify({ structure_id: data.Structure_ID, owner: data.Owner, house_no: data.House_No, digital_address: data.Digital_Address, age: data.Age, type: data.Type, length_m: parseFloat(data.Length_m), breadth_m: parseFloat(data.Breadth_m), wall_type: data.Wall_Type, plaster_type: data.Plaster_Type, roof: data.Roof, floor: data.Floor, door: data.Door, window_type: data.Window, foundation_type: data.Foundation_Type, foundation_strength: parseFloat(data.Foundation_Strength), wall_strength: parseFloat(data.Wall_Strength), latitude: data.Latitude, longitude: data.Longitude, crack_info: data.crack_info, photo_links: '', house_photo_url: '', crack_photos: '' }));
-        
-        alert('⚠️ You are offline! Your form details have been saved as a draft on this device. Please connect to the internet to upload photos and send to the database.');
-        
+        // 1. Prepare the text data
+        const textData = {
+            structure_id: data.Structure_ID, owner: data.Owner, house_no: data.House_No,
+            digital_address: data.Digital_Address, age: data.Age, type: data.Type,
+            length_m: parseFloat(data.Length_m), breadth_m: parseFloat(data.Breadth_m),
+            wall_type: data.Wall_Type, plaster_type: data.Plaster_Type, roof: data.Roof,
+            floor: data.Floor, door: data.Door, window_type: data.Window,
+            foundation_type: data.Foundation_Type, foundation_strength: parseFloat(data.Foundation_Strength),
+            wall_strength: parseFloat(data.Wall_Strength), latitude: data.Latitude,
+            longitude: data.Longitude, crack_info: data.crack_info
+        };
+
+        // 2. Collect all the actual photo files directly from the inputs
+        const offlineFiles = [];
+        const genInput = document.getElementById('photos');
+        if (genInput && genInput.files.length > 0) {
+            for (let file of genInput.files) offlineFiles.push({ file: file, type: 'general' });
+        }
+        if (housePhotoFiles.length > 0) {
+            for (let file of housePhotoFiles) offlineFiles.push({ file: file, type: 'house' });
+        }
+        Object.values(crackPhotoFiles).forEach(filesArray => {
+            filesArray.forEach(file => offlineFiles.push({ file: file, type: 'crack' }));
+        });
+
+        // 3. Save both text and files to the larger phone memory (IndexedDB)
+        await localforage.setItem('offlineDraft', { text: textData, files: offlineFiles });
+
+        alert('⚠️ You are offline! Your form details AND photos have been saved as a draft on this device.');
+
         btn.textContent = originalText;
         btn.disabled = false;
-        return; // Stop here, don't try to upload photos
+        return; // Stop here
     }
     // --- OFFLINE CHECK END ---
 
@@ -659,32 +685,45 @@ function handleCrackPhotos(input, previewId) {
     input.value = '';
 }
     
-    // --- STEP 3: AUTO-SYNC WHEN ONLINE ---
-async function syncOfflineDraft() {
-    const savedDraft = localStorage.getItem('offlineDraft');
     
-    // Only run if we have a draft AND we are online
-    if (savedDraft && navigator.onLine) {
-        const data = JSON.parse(savedDraft);
-        
-        try {
-            // Send the saved text data to Supabase
-            const { error } = await supabaseClient.from('submissions').insert([data]);
-            if (error) throw error;
-            
-            // Clear the draft from memory since it was sent successfully
-            localStorage.removeItem('offlineDraft');
-            alert('✅ Internet is back! Your saved draft has been sent to the database.');
-        } catch (err) {
-            console.error('Sync failed:', err);
+    // --- STEP 3: AUTO-SYNC WHEN ONLINE (NOW WITH PHOTOS) ---
+async function syncOfflineDraft() {
+    const draft = await localforage.getItem('offlineDraft');
+    if (!draft || !navigator.onLine) return;
+
+    const btn = document.getElementById('submitBtn');
+    if (btn) { btn.textContent = '🔄 Syncing saved draft...'; btn.disabled = true; }
+
+    try {
+        // 1. Upload every saved photo and collect URLs by type
+        let generalUrls = [], houseUrls = [], crackUrls = [];
+        for (const item of draft.files) {
+            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}_${item.file.name.replace(/\s+/g, '_')}`;
+            const { error: upErr } = await supabaseClient.storage.from('images').upload(fileName, item.file);
+            if (upErr) throw upErr;
+            const { data: { publicUrl } } = supabaseClient.storage.from('images').getPublicUrl(fileName);
+            if (item.type === 'general') generalUrls.push(publicUrl);
+            if (item.type === 'house') houseUrls.push(publicUrl);
+            if (item.type === 'crack') crackUrls.push(publicUrl);
         }
+
+        // 2. Combine text + photo links and insert into database
+        const row = { ...draft.text, photo_links: generalUrls.join(', '), house_photo_url: houseUrls.join(', '), crack_photos: crackUrls.join(', ') };
+        const { error: insErr } = await supabaseClient.from('submissions').insert([row]);
+        if (insErr) throw insErr;
+
+        // 3. Clear the draft so it isn't sent twice
+        await localforage.removeItem('offlineDraft');
+        alert('✅ Internet is back! Your saved form and photos have been sent to the database.');
+    } catch (err) {
+        console.error('Sync failed:', err);
+        alert('⚠️ Sync failed: ' + err.message);
+    } finally {
+        if (btn) { btn.textContent = '📤 Submit Information'; btn.disabled = false; }
     }
 }
 
-// Run this check when the page loads
 window.addEventListener('load', syncOfflineDraft);
-
-// Run this check every time the internet comes back
 window.addEventListener('online', syncOfflineDraft);
     </script>
 
