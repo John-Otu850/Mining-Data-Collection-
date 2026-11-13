@@ -90,7 +90,7 @@
     <button onclick="testOfflineBar()" style="display: block; margin: 10px auto; padding: 8px 15px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
         🔴 Test Offline Bar
     </button>
-    
+
     <div class="header-nav">
     <div style="display: flex; align-items: center; gap: 10px;">
     <img src="./image/logo.jpeg" alt="Logo" style="height: 40px; width: auto;">
@@ -349,6 +349,18 @@ document.getElementById('structureForm').addEventListener('submit', async functi
         }
     });
     data.crack_info = crackInfo;
+        // --- OFFLINE CHECK START ---
+    if (!navigator.onLine) {
+        // Save the text data to the phone's memory
+        localStorage.setItem('offlineDraft', JSON.stringify(data));
+        
+        alert('⚠️ You are offline! Your form details have been saved as a draft on this device. Please connect to the internet to upload photos and send to the database.');
+        
+        btn.textContent = originalText;
+        btn.disabled = false;
+        return; // Stop here, don't try to upload photos
+    }
+    // --- OFFLINE CHECK END ---
 
        // 2. Prepare all files for upload
     let allUploads = [];
