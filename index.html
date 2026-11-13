@@ -86,6 +86,11 @@
     <div id="connectionStatus" style="background-color: #27ae60; color: white; text-align: center; padding: 10px; font-weight: bold; display: none;">
     📡 You are Offline. Data will be saved locally.
     </div>
+        <!-- TEMPORARY TEST BUTTON -->
+    <button onclick="testOfflineBar()" style="display: block; margin: 10px auto; padding: 8px 15px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        🔴 Test Offline Bar
+    </button>
+    
     <div class="header-nav">
     <div style="display: flex; align-items: center; gap: 10px;">
     <img src="./image/logo.jpeg" alt="Logo" style="height: 40px; width: auto;">
@@ -644,28 +649,41 @@ function handleCrackPhotos(input, previewId) {
     </script>
 
 <script>
-    // 1. Find the status bar we just created
-    const statusDiv = document.getElementById('connectionStatus');
+    // Wait for the page to fully load
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusDiv = document.getElementById('connectionStatus');
 
-    // 2. This function checks if we have internet
-    function checkConnection() {
-        if (navigator.onLine) {
-            // If Online: Hide the bar
-            statusDiv.style.display = 'none';
-        } else {
-            // If Offline: Show the bar and make it Red
-            statusDiv.style.display = 'block';
-            statusDiv.style.backgroundColor = '#e74c3c'; 
-            statusDiv.innerText = '⚠️ You are Offline. Form will save to phone memory.';
+        function checkConnection() {
+            if (navigator.onLine) {
+                statusDiv.style.display = 'none';
+            } else {
+                statusDiv.style.display = 'block';
+                statusDiv.style.backgroundColor = '#e74c3c'; 
+                statusDiv.innerText = '⚠️ You are Offline. Form will save to phone memory.';
+            }
         }
+
+        // Run immediately
+        checkConnection();
+
+        // Listen for internet changes
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', checkConnection);
+    });
+
+    // TEMPORARY TEST FUNCTION: Click this to force the red bar to show!
+    function testOfflineBar() {
+        const statusDiv = document.getElementById('connectionStatus');
+        statusDiv.style.display = 'block';
+        statusDiv.style.backgroundColor = '#e74c3c';
+        statusDiv.innerText = '⚠️ TEST SUCCESS: This is what the offline bar looks like!';
+        
+        // Hide it automatically after 4 seconds
+        setTimeout(function() {
+            statusDiv.style.display = 'none';
+        }, 4000);
     }
+</script>    
 
-    // 3. Check immediately when the page loads
-    checkConnection();
-
-    // 4. Check again if the internet comes back or goes away
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
-</script>
 </body>
 </html>
