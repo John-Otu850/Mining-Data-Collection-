@@ -377,10 +377,12 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             filesArray.forEach(file => offlineFiles.push({ file: file, type: 'crack' }));
         });
 
-        // 3. Save both text and files to the larger phone memory (IndexedDB)
-        await localforage.setItem('offlineDraft', { text: textData, files: offlineFiles });
+        // 3. Get the existing list of drafts (or start an empty one) and add this new one
+        let drafts = await localforage.getItem('offlineDrafts') || [];
+        drafts.push({ text: textData, files: offlineFiles });
+        await localforage.setItem('offlineDrafts', drafts);
 
-        alert('⚠️ You are offline! Your form details AND photos have been saved as a draft on this device.');
+        alert(`⚠️ You are offline! Draft saved. You now have ${drafts.length} draft(s) waiting.`);
 
         btn.textContent = originalText;
         btn.disabled = false;
