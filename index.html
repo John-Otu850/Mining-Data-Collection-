@@ -694,23 +694,24 @@ function handleCrackPhotos(input, previewId) {
     input.value = '';
 }
     
-    
-    
-    // --- STEP 3: AUTO-SYNC MULTIPLE DRAFTS ---
+// --- STEP 3: AUTO-SYNC MULTIPLE DRAFTS (with lock) ---
+let isSyncing = false;
+
 async function syncOfflineDrafts() {
+    if (isSyncing) return;            // <-- the lock: stop a 2nd run
+    isSyncing = true;
+
     const drafts = await localforage.getItem('offlineDrafts') || [];
-    if (drafts.length === 0 || !navigator.onLine) return;
+    if (drafts.length === 0 || !navigator.onLine) { isSyncing = false; return; }
 
     const btn = document.getElementById('submitBtn');
     if (btn) { btn.textContent = `🔄 Syncing ${drafts.length} drafts...`; btn.disabled = true; }
 
     let successCount = 0;
 
-    // Loop through drafts backwards so we can remove them safely
     for (let i = drafts.length - 1; i >= 0; i--) {
         const draft = drafts[i];
         try {
-            // 1. Upload photos
             let generalUrls = [], houseUrls = [], crackUrls = [];
             for (const item of draft.files) {
                 const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}_${item.file.name.replace(/\s+/g, '_')}`;
@@ -722,28 +723,27 @@ async function syncOfflineDrafts() {
                 if (item.type === 'crack') crackUrls.push(publicUrl);
             }
 
-            // 2. Insert into database
             const row = { ...draft.text, photo_links: generalUrls.join(', '), house_photo_url: houseUrls.join(', '), crack_photos: crackUrls.join(', ') };
             const { error: insErr } = await supabaseClient.from('submissions').insert([row]);
             if (insErr) throw insErr;
 
-            // 3. Remove this successful draft from the list
             drafts.splice(i, 1);
+            await localforage.setItem('offlineDrafts', drafts); // save after EACH draft
             successCount++;
         } catch (err) {
             console.error('Draft failed:', err);
         }
     }
 
-    // Save the updated list (in case some failed, they stay in the list for next time)
-    await localforage.setItem('offlineDrafts', drafts);
-
     if (btn) { btn.textContent = '📤 Submit Information'; btn.disabled = false; }
-    if (successCount > 0) alert(`✅ Internet is back! Sent ${successCount} draft(s) to the database.`);
+    if (successCount > 0) alert(`✅ Sent ${successCount} draft(s) to the database.`);
+    isSyncing = false;                 // <-- release the lock
 }
 
 window.addEventListener('load', syncOfflineDrafts);
-window.addEventListener('online', syncOfflineDrafts);
+window.addEventListener('online', syncOfflineDrafts); 
+    
+   
     </script>
 
 <script>
