@@ -92,6 +92,11 @@
         🔴 Test Offline Bar
     </button>
 
+        <!-- Manual Sync Button -->
+    <button id="manualSyncBtn" onclick="syncOfflineDrafts()" style="display: none; margin: 10px auto; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        🔄 Sync Saved Drafts
+    </button>
+
     <div class="header-nav">
     <div style="display: flex; align-items: center; gap: 10px;">
     <img src="./image/logo.jpeg" alt="Logo" style="height: 40px; width: auto;">
@@ -788,6 +793,17 @@ window.addEventListener('online', syncOfflineDrafts);
        const crackPreviews = document.querySelectorAll('#crackBody .photo-preview');
        crackPreviews.forEach(p => p.innerHTML = '');
    });
+
+       // Check for drafts when the page loads and show the button if needed
+    async function checkForDrafts() {
+        const drafts = await localforage.getItem('offlineDrafts') || [];
+        const syncBtn = document.getElementById('manualSyncBtn');
+        if (drafts.length > 0 && syncBtn) {
+            syncBtn.style.display = 'block';
+            syncBtn.innerText = `🔄 Sync ${drafts.length} Draft(s)`;
+        }
+    }
+    window.addEventListener('load', checkForDrafts);
 </script>    
 
 </body>
