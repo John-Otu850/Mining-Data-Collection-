@@ -352,7 +352,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
         // --- OFFLINE CHECK START ---
     if (!navigator.onLine) {
         // Save the text data to the phone's memory
-        localStorage.setItem('offlineDraft', JSON.stringify(data));
+        localStorage.setItem('offlineDraft', JSON.stringify({ structure_id: data.Structure_ID, owner: data.Owner, house_no: data.House_No, digital_address: data.Digital_Address, age: data.Age, type: data.Type, length_m: parseFloat(data.Length_m), breadth_m: parseFloat(data.Breadth_m), wall_type: data.Wall_Type, plaster_type: data.Plaster_Type, roof: data.Roof, floor: data.Floor, door: data.Door, window_type: data.Window, foundation_type: data.Foundation_Type, foundation_strength: parseFloat(data.Foundation_Strength), wall_strength: parseFloat(data.Wall_Strength), latitude: data.Latitude, longitude: data.Longitude, crack_info: data.crack_info, photo_links: '', house_photo_url: '', crack_photos: '' }));
         
         alert('⚠️ You are offline! Your form details have been saved as a draft on this device. Please connect to the internet to upload photos and send to the database.');
         
@@ -658,6 +658,34 @@ function handleCrackPhotos(input, previewId) {
     // Clear the input value so you can select the same file again if you want
     input.value = '';
 }
+    
+    // --- STEP 3: AUTO-SYNC WHEN ONLINE ---
+async function syncOfflineDraft() {
+    const savedDraft = localStorage.getItem('offlineDraft');
+    
+    // Only run if we have a draft AND we are online
+    if (savedDraft && navigator.onLine) {
+        const data = JSON.parse(savedDraft);
+        
+        try {
+            // Send the saved text data to Supabase
+            const { error } = await supabaseClient.from('submissions').insert([data]);
+            if (error) throw error;
+            
+            // Clear the draft from memory since it was sent successfully
+            localStorage.removeItem('offlineDraft');
+            alert('✅ Internet is back! Your saved draft has been sent to the database.');
+        } catch (err) {
+            console.error('Sync failed:', err);
+        }
+    }
+}
+
+// Run this check when the page loads
+window.addEventListener('load', syncOfflineDraft);
+
+// Run this check every time the internet comes back
+window.addEventListener('online', syncOfflineDraft);
     </script>
 
 <script>
