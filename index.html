@@ -312,13 +312,14 @@
                 <h2>🔍 Crack Info</h2>
                 <div class="crack-table">
                     <table>
-                        <thead><tr><th>Crack ID</th><th>Length (cm)</th><th>Width (mm)</th><th>Nature</th><th>Photo</th></tr></thead>
+                        <thead><tr><th>Crack ID</th><th>Length (cm)</th><th>Width (mm)</th><th>Nature</th><th>Location</th><th>Photo</th></tr></thead>
                         <tbody id="crackBody">
                             <tr>
                             <td><input type="text" name="Crack1_ID" class="crack-input" placeholder="e.g., C1"></td>
                                 <td><input type="number" name="Crack1_Length" class="crack-input" step="0.1" placeholder="e.g., 5.5"></td>
                                 <td><input type="number" name="Crack1_Width" class="crack-input" step="0.1" placeholder="e.g., 1.2"></td>
                                 <td><input type="text" name="Crack1_Nature" class="crack-input" placeholder="e.g., Deep"></td>
+                                <td><input list="crackLocations" name="Crack1_Location" class="crack-input" placeholder="Select or type..."><datalist id="crackLocations"><option value="Beam"><option value="Column"><option value="Floor"><option value="Wall"><option value="Around openings"></datalist></td>
                                 <td style="text-align: center;">
                                 <input type="file" id="crackPhotoInput1" accept="image/*" multiple style="display: none;" onchange="handleCrackPhotos(this, 'crackPhotoPreview1')">
                             <button type="button"class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput1').click()">📸 Add</button>                                
@@ -619,12 +620,11 @@ function addCrackRow() {
         <td><input type="number" name="Crack${count}_Length" class="crack-input" step="0.1" placeholder="e.g., 5.5"></td>
         <td><input type="number" name="Crack${count}_Width" class="crack-input" step="0.1" placeholder="e.g., 1.2"></td>
         <td><input type="text" name="Crack${count}_Nature" class="crack-input" placeholder="e.g., Deep"></td>
+        <td><input list="crackLocations" name="Crack${count}_Location" class="crack-input" placeholder="Select or type..."></td>
         <td style="text-align: center;">
-
-        <input type="file" id="crackPhotoInput${count}" accept="image/*" multiple style="display: none;" onchange="handleCrackPhotos(this, 'crackPhotoPreview${count}')">
-        <button type="button" class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput${count}').click()">📸 Add</button>
-            
-        <div id="crackPhotoPreview${count}" class="photo-preview" style="justify-content: center;"></div>
+            <input type="file" id="crackPhotoInput${count}" accept="image/*" multiple style="display: none;" onchange="handleCrackPhotos(this, 'crackPhotoPreview${count}')">
+            <button type="button" class="btn-gps" style="padding: 5px 10px; margin: 0;" onclick="document.getElementById('crackPhotoInput${count}').click()">📸 Add</button>
+            <div id="crackPhotoPreview${count}" class="photo-preview" style="justify-content: center;"></div>
         </td>
     `;
 }
