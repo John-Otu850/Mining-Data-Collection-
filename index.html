@@ -404,7 +404,11 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             floor: data.Floor, door: data.Door, window_type: data.Window,
             foundation_type: data.Foundation_Type, foundation_strength: parseFloat(data.Foundation_Strength),
             wall_strength: parseFloat(data.Wall_Strength), latitude: data.Latitude,
-            longitude: data.Longitude, crack_info: data.crack_info
+            longitude: data.Longitude, crack_info: data.crack_info,
+            wall_column_separation: data.Wall_Column_Separation,
+            roofing_leakage: data.Roofing_Leakage,
+            structure_collapse_sign: data.Structure_Collapse_Sign,
+            soil_erosion: data.Soil_Erosion
         };
 
         // 2. Collect all the actual photo files directly from the inputs
@@ -529,7 +533,12 @@ document.getElementById('structureForm').addEventListener('submit', async functi
                 crack_info: data.crack_info,
                 photo_links: data.photo_links,
                 house_photo_url: data.house_photo_url, // NEW
-                crack_photos: data.crack_photos         // NEW
+                crack_photos: data.crack_photos,
+                wall_column_separation: data.Wall_Column_Separation,
+                roofing_leakage: data.Roofing_Leakage,
+                structure_collapse_sign: data.Structure_Collapse_Sign,
+                soil_erosion: data.Soil_Erosion
+                         // NEW
             }]);
 
         if (error) throw error;
