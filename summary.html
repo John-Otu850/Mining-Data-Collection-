@@ -200,8 +200,11 @@ function displayTable(submissions) {
                         <p><strong>Door:</strong> ${sub.door || 'N/A'} | <strong>Window:</strong> ${sub.window_type || 'N/A'}</p>
                         <p><strong>Foundation:</strong> ${sub.foundation_type || 'N/A'} (Strength: ${sub.foundation_strength || 'N/A'})</p>
                         <p><strong>Wall Strength:</strong> ${sub.wall_strength || 'N/A'}</p>
+                        <p><strong>Separation of walls from columns:</strong> ${sub.wall_column_separation || 'N/A'} | <strong>Sign of possible collapse:</strong> ${sub.structure_collapse_sign || 'N/A'}</p>
+                        <p><strong>Soil erosion around foundation:</strong> ${sub.soil_erosion || 'N/A'} | <strong>Roofing leakage:</strong> ${sub.roofing_leakage || 'N/A'}</p>
                         <p><strong>Latitude:</strong> ${sub.latitude || 'N/A'} | <strong>Longitude:</strong> ${sub.longitude || 'N/A'}</p>
                         ${sub.crack_info ? `<p><strong>Crack Info:</strong> ${sub.crack_info}</p>` : ''}
+                        ${sub.crack_location ? `<p><strong>Crack Location:</strong> ${sub.crack_location}</p>` : ''}
                         <!-- House Photo -->
 ${sub.house_photo_url ? `
     <p><strong>🏠 House Photo:</strong></p>
