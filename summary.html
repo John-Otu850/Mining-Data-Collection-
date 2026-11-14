@@ -367,8 +367,9 @@ async function downloadFullExcel() {
     table += '<th>Date</th><th>Structure ID</th><th>Owner</th><th>House No</th><th>Digital Address</th>';
     table += '<th>Age</th><th>Type</th><th>Wall</th><th>Plaster</th><th>Roof</th><th>Floor</th>';
     table += '<th>Door</th><th>Window</th><th>Foundation</th><th>Wall Strength</th>';
-    table += '<th>Latitude</th><th>Longitude</th><th>Crack Info</th>';
-    table += '<th>Photo Link</th><th>House Photo Link</th><th>Crack Photo Link</th>'; // NEW HEADERS
+    table += '<th>Wall Separation</th><th>Collapse Sign</th><th>Soil Erosion</th><th>Roof Leakage</th>';
+    table += '<th>Latitude</th><th>Longitude</th><th>Crack Info</th><th>Crack Location</th>';
+    table += '<th>Photo Link</th><th>House Photo Link</th><th>Crack Photo Link</th>';
     table += '</tr>';
 
     // Create a row for every person
@@ -389,9 +390,14 @@ async function downloadFullExcel() {
         table += `<td>${row.window_type || ''}</td>`;
         table += `<td>${row.foundation_type || ''}</td>`;
         table += `<td>${row.wall_strength || ''}</td>`;
+        table += `<td>${row.wall_column_separation || ''}</td>`;
+        table += `<td>${row.structure_collapse_sign || ''}</td>`;
+        table += `<td>${row.soil_erosion || ''}</td>`;
+        table += `<td>${row.roofing_leakage || ''}</td>`;
         table += `<td>${row.latitude || ''}</td>`;
         table += `<td>${row.longitude || ''}</td>`;
         table += `<td>${row.crack_info || ''}</td>`;
+        table += `<td>${row.crack_location || ''}</td>`;
         table += `<td>${row.photo_links || ''}</td>`; // NEW
         table += `<td>${row.house_photo_url || ''}</td>`; // NEW
         table += `<td>${row.crack_photos || ''}</td>`; // NEW
@@ -501,9 +507,14 @@ async function generatePDF() {
             <div class="detail-row"><span class="label">Window:</span> ${row.window_type || 'N/A'}</div>
             <div class="detail-row"><span class="label">Foundation:</span> ${row.foundation_type || 'N/A'}</div>
             <div class="detail-row"><span class="label">Wall Strength:</span> ${row.wall_strength || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Separation of walls from columns:</span> ${row.wall_column_separation || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Sign of possible structure collapse:</span> ${row.structure_collapse_sign || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Soil erosion around foundation:</span> ${row.soil_erosion || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Roofing leakage and water penetration:</span> ${row.roofing_leakage || 'N/A'}</div>
             <div class="detail-row"><span class="label">Latitude:</span> ${row.latitude || 'N/A'}</div>
             <div class="detail-row"><span class="label">Longitude:</span> ${row.longitude || 'N/A'}</div>
             <div class="detail-row"><span class="label">Crack Info:</span> ${row.crack_info || 'N/A'}</div>
+            <div class="detail-row"><span class="label">Crack Location:</span> ${row.crack_location || 'N/A'}</div>
             
             <!-- House Photo Section -->
             <div class="photo-section">
