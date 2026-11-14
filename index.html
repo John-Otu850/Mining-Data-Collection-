@@ -376,6 +376,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
 
     // 1. Collect Crack Info text
     let crackInfo = "";
+    let crackLocations = [];
 
     const crackInputs = document.querySelectorAll('#crackBody tr');
     
@@ -386,6 +387,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             const wid = row.querySelector(`[name="Crack${index+1}_Width"]`).value;
             const nat = row.querySelector(`[name="Crack${index+1}_Nature"]`).value;
             const loc = row.querySelector(`[name="Crack${index+1}_Location"]`).value;
+            if (loc) crackLocations.push(loc);
             crackInfo += `Crack ${index+1}: ID=${idInput.value}, Length=${len}cm, Width=${wid}mm, Nature=${nat}, Location=${loc} | `;
             
             
@@ -393,6 +395,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
         }
     });
     data.crack_info = crackInfo;
+    data.crack_location = crackLocations.join(', ');
         // --- OFFLINE CHECK START ---
     if (!navigator.onLine) {
         // 1. Prepare the text data
@@ -405,6 +408,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
             foundation_type: data.Foundation_Type, foundation_strength: parseFloat(data.Foundation_Strength),
             wall_strength: parseFloat(data.Wall_Strength), latitude: data.Latitude,
             longitude: data.Longitude, crack_info: data.crack_info,
+            crack_location: data.crack_location,
             wall_column_separation: data.Wall_Column_Separation,
             roofing_leakage: data.Roofing_Leakage,
             structure_collapse_sign: data.Structure_Collapse_Sign,
@@ -531,6 +535,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
                 latitude: data.Latitude,
                 longitude: data.Longitude,
                 crack_info: data.crack_info,
+                crack_location: data.crack_location,
                 photo_links: data.photo_links,
                 house_photo_url: data.house_photo_url, // NEW
                 crack_photos: data.crack_photos,
