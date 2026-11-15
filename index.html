@@ -347,6 +347,9 @@
             </div>
 
             <div class="form-actions">
+            <button id="syncDraftsBtn" type="button" style="width: 100%; padding: 15px; margin-bottom: 15px; background-color: #f39c12; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; display: none; cursor: pointer;">
+                🔄 Sync Offline Drafts (<span id="draftCount">0</span>)
+            </button>
                 <button type="submit" class="btn-submit" id="submitBtn">📤 Submit Information</button>
                 <button type="reset" class="btn-reset">🔄 Clear Form</button>
             </div>
@@ -792,11 +795,29 @@ async function syncOfflineDrafts() {
 
     if (btn) { btn.textContent = '📤 Submit Information'; btn.disabled = false; }
     if (successCount > 0) alert(`✅ Sent ${successCount} draft(s) to the database.`);
+    updateSyncButton();
     isSyncing = false;                 // <-- release the lock
 }
 
 window.addEventListener('load', syncOfflineDrafts);
 window.addEventListener('online', syncOfflineDrafts);
+    // Setup the manual sync button
+    const syncBtn = document.getElementById('syncDraftsBtn');
+    syncBtn.addEventListener('click', syncOfflineDrafts);
+
+    async function updateSyncButton() {
+        const drafts = await localforage.getItem('offlineDrafts');
+        const countSpan = document.getElementById('draftCount');
+        if (drafts && drafts.length > 0) {
+            syncBtn.style.display = 'block';
+            countSpan.textContent = drafts.length;
+        } else {
+            syncBtn.style.display = 'none';
+        }
+    }
+    
+    // Check drafts on load
+    window.addEventListener('load', updateSyncButton);
     // iOS Safari fix: Sync when the user brings the page back to the front
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden && navigator.onLine) {
@@ -830,19 +851,7 @@ window.addEventListener('online', syncOfflineDrafts);
         window.addEventListener('offline', checkConnection);
     });
 
-    // TEMPORARY TEST FUNCTION: Click this to force the red bar to show!
-    function testOfflineBar() {
-        const statusDiv = document.getElementById('connectionStatus');
-        statusDiv.style.display = 'block';
-        statusDiv.style.backgroundColor = '#e74c3c';
-        statusDiv.innerText = '⚠️ TEST SUCCESS: This is what the offline bar looks like!';
-        
-        // Hide it automatically after 4 seconds
-        setTimeout(function() {
-            statusDiv.style.display = 'none';
-        }, 4000);
-    }
-
+    
        // Fix the "Clear Form" button to also clear our custom photo variables
    document.getElementById('structureForm').addEventListener('reset', function() {
        // Clear house photos
