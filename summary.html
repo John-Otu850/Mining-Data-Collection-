@@ -206,23 +206,26 @@ function displayTable(submissions) {
                         ${sub.crack_info ? `<p><strong>Crack Info:</strong> ${sub.crack_info}</p>` : ''}
                         ${sub.crack_location ? `<p><strong>Crack Location:</strong> ${sub.crack_location}</p>` : ''}
                         <!-- House Photo -->
-${sub.house_photo_url ? `
-    <p><strong>🏠 House Photo:</strong></p>
-    <div style="margin-bottom: 15px;">
-        <img src="${sub.house_photo_url.trim()}" style="width: 100%; max-width: 300px; border-radius: 4px; border: 1px solid #ddd;">
-    </div>
-` : ''}
+   ${sub.house_photo_url ? `
+       <p><strong>🏠 House Photo:</strong></p>
+       <div style="position:relative; display:inline-block; margin-bottom: 15px;">
+           <img src="${sub.house_photo_url.trim()}" style="width: 100%; max-width: 300px; border-radius: 4px; border: 1px solid #ddd;">
+           <button onclick="downloadImage('${sub.house_photo_url.trim()}', '${sub.structure_id}_house')" style="position:absolute; top:5px; right:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">⬇️ Download</button>
+       </div>
+   ` : ''}
 
 <!-- Crack Photos -->
 ${sub.crack_photos ? `
     <p><strong>🔍 Crack Photos:</strong></p>
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 15px;">
         ${sub.crack_photos.split(',').map((url, idx) => `
-            <img src="${url.trim()}" style="width:150px; height:150px; object-fit:cover; border-radius:4px; border:1px solid #ddd;">
+            <div style="position:relative; display:inline-block;">
+                <img src="${url.trim()}" style="width:150px; height:150px; object-fit:cover; border-radius:4px; border:1px solid #ddd;">
+                <button onclick="downloadImage('${url.trim()}', '${sub.structure_id}_crack_${idx}')" style="position:absolute; top:5px; right:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">⬇️</button>
+            </div>
         `).join('')}
     </div>
 ` : ''}
-
 <!-- Distance Calculator -->
 <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db;">
     <p><strong>📏 Calculate Distance to Another Structure:</strong></p>
