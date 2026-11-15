@@ -796,7 +796,13 @@ async function syncOfflineDrafts() {
 }
 
 window.addEventListener('load', syncOfflineDrafts);
-window.addEventListener('online', syncOfflineDrafts); 
+window.addEventListener('online', syncOfflineDrafts);
+    // iOS Safari fix: Sync when the user brings the page back to the front
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && navigator.onLine) {
+            syncOfflineDrafts();
+        }
+    }); 
     
    
     </script>
