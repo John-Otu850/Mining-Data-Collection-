@@ -758,6 +758,7 @@ async function syncOfflineDrafts() {
     alert('Sync function started!');
 
     const drafts = await localforage.getItem('offlineDrafts') || [];
+    alert('Drafts: ' + drafts.length + ' | Online Status: ' + navigator.onLine);
     if (drafts.length === 0 || !navigator.onLine) { isSyncing = false; return; }
 
     const btn = document.getElementById('submitBtn');
