@@ -755,6 +755,7 @@ let isSyncing = false;
 async function syncOfflineDrafts() {
     if (isSyncing) return;            // <-- the lock: stop a 2nd run
     isSyncing = true;
+    alert('Sync function started!');
 
     const drafts = await localforage.getItem('offlineDrafts') || [];
     if (drafts.length === 0 || !navigator.onLine) { isSyncing = false; return; }
