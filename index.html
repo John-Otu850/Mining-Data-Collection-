@@ -436,7 +436,7 @@ document.getElementById('structureForm').addEventListener('submit', async functi
         let drafts = await localforage.getItem('offlineDrafts') || [];
         drafts.push({ text: textData, files: offlineFiles });
         await localforage.setItem('offlineDrafts', drafts);
-
+        updateSyncButton();
         alert(`⚠️ You are offline! Draft saved. You now have ${drafts.length} draft(s) waiting.`);
 
         this.reset(); 
